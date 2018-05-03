@@ -43,15 +43,18 @@ def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_n
     all_layers = symbol.get_internals()
 
     layer_names=args.layer_name.split(',')
+    #####like the shuffenet and densenet, just concat different layers, and shuffle them, play with it
+    ##### i dont know if the shuffle will help, but i am sure the concat do work in many task
+    ##### write by lz 2018.5.3
+    #random.shuffle(layer_names)
+    
     layers_embed=[]
     for layer in layer_names:
         net_tmp = all_layers[layer+'_output']
         layers_embed.append(net_tmp)
-    #####like the shuffe bet and densenet, just concat different layers, and shuffle them, play with it
-    ##### i dont know if the shuffle will help, but i am sure the concat do work in many task
-    ##### write by lz 2018.5.3
-  
-    random.shuffle(layer_names)
+
+    
+    
     net = mx.symbol.concat(*layers_embed)
     net = mx.symbol.BatchNorm(data=net,fix_gamma=False, momentum=0.9, eps=2e-5)
     net = mx.symbol.LeakyReLU(data=net,act_type='prelu')
