@@ -2,15 +2,18 @@
 Use Mxnet do Classification
 
 
-#1.把数据放入/data下，不同的类别分别在一个目录，例如 /data/dog; /data/cat
+#1.把数据解压缩放当前目录
 
-#2. python get_list.py 将生成train.lst 和val.lst
+#2.python get_list.py --ratio 0.8 将生成train.lst 和val.lst
 
-#3. python train.py --fintune 1 --num_class 2
-默认的是以mobilenet进行fintune，可以进入train.py 调节参数，也可以用其他的基础网络结构来运行
+#3.bash ./downmodel.sh 下载预训练模型
+#4.bash ./train.sh
 
+结束后
 
-Myaugmentation.py 可以用来增加数据集增强的方法
-Mydataiter.py 可以用来更改数据迭代形式
+# python predict.py --epoch 4 输出结果
+#
+
+你可以得到一个0.98+以上的结果
 
 
