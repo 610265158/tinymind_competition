@@ -14,7 +14,7 @@ N=10
 
 
 import argparse
-parser = argparse.ArgumentParser(description='Process train and val list.')
+parser = argparse.ArgumentParser(description='Predict')
 
 parser.add_argument('--data_shape', dest='data_shape',type=int, default=128,  \
                     help='the image shape  (default: 128)')
