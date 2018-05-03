@@ -1,0 +1,2 @@
+# tinymind_competition
+tinymind_competition
