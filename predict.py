@@ -24,10 +24,11 @@ parser.add_argument('--network', dest='network',type=str, default='resnext-50', 
                     help='network used to do predict')
 parser.add_argument('--pseduolabel', dest='pseduolabel',type=bool, default=False,  \
                     help='if to pseduolabel')
-
+parser.add_argument('--epoch', dest='epoch',type=int, default=4,  \
+                    help='which epoch to used')
 
 args = parser.parse_args()
-sym, arg_params, aux_params = mx.model.load_checkpoint('./trained_models/your_model', 5)
+sym, arg_params, aux_params = mx.model.load_checkpoint('./trained_models/your_model', args.epoch)
 
 
 mod = mx.mod.Module(symbol=sym, context=mx.gpu())
