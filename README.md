@@ -11,7 +11,7 @@ Use Mxnet do Classification
 
 结束后
 
-# python predict.py --epoch 4 输出结果
+#python predict.py --epoch 4 输出结果
 #
 
 你可以得到一个0.98+以上的结果
