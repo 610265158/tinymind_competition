@@ -52,12 +52,12 @@ def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_n
     ##### write by lz 2018.5.3
   
     random.shuffle(layer_names)
-    net=mx.symbol.concat(*layers_embed)
-    net=mx.symbol.BatchNorm(data=net,fix_gamma=False, momentum=0.9, eps=2e-5)
+    net = mx.symbol.concat(*layers_embed)
+    net = mx.symbol.BatchNorm(data=net,fix_gamma=False, momentum=0.9, eps=2e-5)
     net = mx.symbol.LeakyReLU(data=net,act_type='prelu')
     #net = mx.symbol.Dropout(data=net, p=0.4)
 
-    embedding=mx.symbol.FullyConnected(data=net,num_hidden=1024)
+    embedding = mx.symbol.FullyConnected(data=net,num_hidden=1024)
     embedding = mx.symbol.LeakyReLU(data=embedding, act_type='prelu')
     embedding = mx.symbol.Dropout(data=embedding, p=0.5)
     #embedding = mx.symbol.L2Normalization(data=embedding)
