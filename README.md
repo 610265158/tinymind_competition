@@ -16,10 +16,18 @@ this code is for https://www.tinymind.cn/competitions/41
 结束后， 选择一个不错的epoch，这里选择第四个epoch
 
 #python predict.py --epoch 4 输出结果
-#
 
+#
 你可以得到一个0.98+以上的结果
 
 
 代码比较糙， :）
+
+
+
+
+
+
+#
+if there is something wrong, contact me with e-mail: 2120140200@mail.nankai.edu.cn
 
