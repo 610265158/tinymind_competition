@@ -1,6 +1,8 @@
 # My_Mxnet_toolkit
 Use Mxnet do Classification
 
+this code is for https://www.tinymind.cn/competitions/41
+
 ## How to use
 
 #1.把数据解压缩放在当前目录
