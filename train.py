@@ -1,5 +1,10 @@
 # -*- coding:utf-8 -*-
+###############
+'''
+write by lz 2018.5.3, just play with it
+'''
 
+############
 import mxnet as mx
 
 
