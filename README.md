@@ -3,6 +3,10 @@ Use Mxnet do Classification
 
 this code is for https://www.tinymind.cn/competitions/41
 
+
+## env
+ubuntu16.04 mxnet 1.2.0, cuda9, cudnn7, python3
+
 ## How to use
 
 #1.把数据解压缩放在当前目录
