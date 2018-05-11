@@ -83,7 +83,7 @@ def get_iterator(batch_size,data_shape):
                                     aug_list=aug_list_train,
                                     shuffle=True,
                                     path_root='',
-                                    path_imglist=os.getcwd()+'/fake.lst',
+                                    path_imglist=os.getcwd()+'/train.lst',
                                     )
     val_iter = mx.image.ImageIter(batch_size=batch_size,
                                   data_shape=(3, shape_, shape_),
