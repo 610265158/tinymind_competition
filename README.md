@@ -43,6 +43,11 @@ bash ./train.sh
 
 python predict.py --epoch 6
 
+
+And you can run 
+    python show.py 
+to view the data after augmentation
+
 Now, it is very easy to get a result over 0.99, just play with it ：)
 #
 
