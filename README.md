@@ -9,27 +9,27 @@ ubuntu16.04 mxnet 1.2.0, cuda9, cudnn7, python3
 
 ## How to use
 
-#1.release the data into the dir
+#1.release the data to the current directory
 
-#2.python get_list.py --ratio 0.8 produce train.lst and val.lst
+#2.python get_list.py --ratio 0.8      //produce train.lst and val.lst
 
-#3.bash ./downmodel.sh download the pretrained model， (mxnet model zoo)
+#3.bash ./downmodel.sh                 //download the pretrained model， (mxnet model zoo)
 
-#4.bash ./train.sh
+#4.bash ./train.sh                     //start to train
 
 when it converged, chose a good one with high top-5 acc
 
 #python predict.py --epoch 4 
 
 #
-a result 0.98+ 
+a result 0.98+ was got
 
 
 代码比较糙， :）
 
 #
 ## Update
-Some improvement were made. Now, 0.989+ for single model,
+Some improvements were made. Now, 0.989+ for single model,
 
 Do as below:
 
