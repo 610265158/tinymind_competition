@@ -43,8 +43,8 @@ bash ./train.sh
 
 python predict.py --epoch 6
 
-
-#
 Now, the it is very easy to get a result over 0.99, just play with it ：)
+#
+
 if there is something wrong, contact me with e-mail: 2120140200@mail.nankai.edu.cn
 
