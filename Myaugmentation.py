@@ -40,8 +40,8 @@ def blur(src,kernel):
     '''
     image = src.asnumpy()
     image=cv2.GaussianBlur(image, kernel,0),
-    blured = mx.nd.array(image)
-    blured=blured.reshape(shape=(128,128,3))
+    blured = mx.nd.array(image[0])
+    
     return blured
 
 
