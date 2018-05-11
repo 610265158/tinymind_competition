@@ -29,7 +29,15 @@ ubuntu16.04 mxnet 1.2.0, cuda9, cudnn7, python3
 
 
 
+##Update
+Some improvement were made. Now, 0.989+ for single model,
 
+Do as below:
+python get_list.py --ratio 0.9
+bash ./downmodel.sh
+bash ./train.sh
+......chose the best  model with good validation top-5 acc, epoch 6 for example
+python predict.py --epoch 6
 
 
 #
