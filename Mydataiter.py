@@ -44,43 +44,49 @@ def get_iterator(batch_size,data_shape):
                        [-0.5808, -0.0045, -0.8140],
                        [-0.5836, -0.6948, 0.4203]])
     shape_ = data_shape
-    shape = (3, data_shape, data_shape)
+
 
     import Myaugmentation
 
     aug_list_test = [
-                    mx.image.ForceResizeAug(size=(shape_+int(0.1*shape_), shape_+int(0.1*shape_))),
+                    mx.image.ForceResizeAug(size=(shape_+int(0.1*shape_), shape_+int(0.2*shape_))),
                     mx.image.CenterCropAug((shape_, shape_)),
                     mx.image.CastAug(),
+
                     
     ]
 
     aug_list_train = [
+        mx.image.ForceResizeAug(size=(shape_ + int(0.1 * shape_), shape_ + int(0.2 * shape_))),
 
-                    mx.image.ForceResizeAug(size=(shape_+int(0.1*shape_), shape_+int(0.1*shape_))),
+        mx.image.RandomCropAug((shape_, shape_)),
+        ##flip not suitable for charactor
+        # mx.image.HorizontalFlipAug(0.5),
+        mx.image.CastAug(),
+        Myaugmentation.BlurAug(0.5, (5, 5)),
 
-                    mx.image.RandomCropAug((shape_, shape_)),
-                    #mx.image.HorizontalFlipAug(0.5),
-                    mx.image.CastAug(),
-                    mx.image.ColorJitterAug(0.1, 0.1, 0.1),
-                    mx.image.HueJitterAug(0.5),
-                    mx.image.LightingAug(0.1, eigval, eigvec),
-                    mx.image.RandomGrayAug(0.3),
-                    #### extra augmentation
+        mx.image.ColorJitterAug(0.1, 0.1, 0.1),
+        mx.image.HueJitterAug(0.5),
+        mx.image.LightingAug(0.5, eigval, eigvec),
+        mx.image.RandomGrayAug(0.5),
+        # #### extra augmentation
+        Myaugmentation.RandomRotateAug(10, 0.5),
 
-                    Myaugmentation.RandomRotateAug(10, 0.5)
+        Myaugmentation.BlurAug(0.5, (7, 7)),
+
+        Myaugmentation.Castint8Aug(0.3)
     ]
 
     train_iter = mx.image.ImageIter(batch_size=batch_size,
-                                    data_shape=shape,
+                                    data_shape=(3, shape_, shape_),
                                     label_width=1,
                                     aug_list=aug_list_train,
                                     shuffle=True,
                                     path_root='',
-                                    path_imglist=os.getcwd()+'/train.lst',
+                                    path_imglist=os.getcwd()+'/fake.lst',
                                     )
     val_iter = mx.image.ImageIter(batch_size=batch_size,
-                                  data_shape=shape,
+                                  data_shape=(3, shape_, shape_),
                                   label_width=1,
                                   shuffle=False,
                                   aug_list=aug_list_test,

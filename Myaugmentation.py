@@ -1,9 +1,8 @@
 import cv2
 import mxnet as mx
-from mxnet.image import  Augmenter
+from mxnet.image import Augmenter
 import random
 import numpy as np
-
 def rotate(src, angle, center=None, scale=1.0):
 
     '''
@@ -21,29 +20,29 @@ def rotate(src, angle, center=None, scale=1.0):
         center = (w / 2, h / 2)
     # 执行旋转
     M = cv2.getRotationMatrix2D(center, angle, scale)
-    rotated = cv2.warpAffine(image, M, (w, h))
-    rotated = mx.nd.array(rotated,dtype=np.uint8)
+    rotated = cv2.warpAffine(image, M, (w, h),flags=3,borderMode=cv2.BORDER_REPLICATE)
+    rotated = mx.nd.array(rotated)
+
     # 返回旋转后的图像
     return rotated
 
 def SaltAndPepper(src,percent):
     '''
-    function add salt noise
-    :param src:
-    :param percet:
-    :return:
 
     '''
-    Salted=src
-    image=int(percent*src.shape[0]*src.shape[1])
-    for i in range(image):
-        randX=random.randint(0,src.shape[0]-1)
-        randY=random.randint(0,src.shape[1]-1)
-        if random.randint(0,1)==0:
-            Salted[randX,randY]=255.
-    return Salted
+    pass
+    #TODO
 
-
+def blur(src,kernel):
+    '''
+    :param src: source image
+    :param kernel: the kernel applied to src
+    '''
+    image = src.asnumpy()
+    image=cv2.GaussianBlur(image, kernel,0),
+    blured = mx.nd.array(image)
+    blured=blured.reshape(shape=(128,128,3))
+    return blured
 
 
 #####################
@@ -67,7 +66,7 @@ class RandomRotateAug(Augmenter):
         if a > self.p:
             return src
         else:
-            angle=random.randint(-self.maxangel,self.maxangel)
+            angle=random.uniform(-self.maxangel,self.maxangel)
             return rotate(src,angle)
 
 
@@ -92,10 +91,10 @@ class RandomNoiseAug(Augmenter):
             return SaltAndPepper(src,self.percent)
 
 ####Imagenet data Normlization
-class NormalizeAUG(Augmenter):
+class NormalizeAug(Augmenter):
 
     def __init__(self, ):
-        super(NormalizeAUG, self).__init__()
+        super(NormalizeAug, self).__init__()
 
     def __call__(self, src):
         src = src/255.
@@ -103,3 +102,38 @@ class NormalizeAUG(Augmenter):
                                       mean=mx.nd.array([0.485, 0.456, 0.406]),
                                       std=mx.nd.array([0.229, 0.224, 0.225]))
         return normalized
+
+
+
+###blue aug
+class BlurAug(Augmenter):
+    def __init__(self,  possibility,kernel):
+        super(BlurAug, self).__init__(possibility=possibility,kernel=kernel)
+
+        self.p = possibility
+        self.kernel=kernel
+    def __call__(self, src):
+        """Augmenter body"""
+        a = random.random()
+        if a > self.p:
+            return src
+        else:
+            return blur(src,self.kernel)
+
+
+###cat int8, maintain
+class Castint8Aug(Augmenter):
+    def __init__(self,  possibility):
+        super(Castint8Aug, self).__init__(possibility=possibility)
+
+        self.p = possibility
+
+    def __call__(self, src):
+        """Augmenter body"""
+        a = random.random()
+        if a > self.p:
+            return src
+        else:
+            return mx.nd.array(src,dtype=np.int8)
+
+

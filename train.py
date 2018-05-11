@@ -4,10 +4,13 @@
 write by lz 2018.5.3, just play with it
 '''
 
+
 ############
 import mxnet as mx
+import random
+import os
 
-
+os.environ['MXNET_CPU_WORKER_NTHREADS'] = '4'
 
 import argparse
 parser = argparse.ArgumentParser(description='Start train.')
@@ -48,24 +51,23 @@ def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_n
     all_layers = symbol.get_internals()
 
     layer_names=args.layer_name.split(',')
-    #####like the shuffenet and densenet, just concat different layers, and shuffle them, play with it
+
+    #####like the shuffe bet and densenet, just concat different layers, and shuffle them, play with it
     ##### i dont know if the shuffle will help, but i am sure the concat do work in many task
     ##### write by lz 2018.5.3
     #random.shuffle(layer_names)
-    
+
     layers_embed=[]
     for layer in layer_names:
         net_tmp = all_layers[layer+'_output']
         layers_embed.append(net_tmp)
 
-    
-    
-    net = mx.symbol.concat(*layers_embed)
+    net=mx.symbol.concat(*layers_embed)
+
     net = mx.symbol.BatchNorm(data=net,fix_gamma=False, momentum=0.9, eps=2e-5)
     net = mx.symbol.LeakyReLU(data=net,act_type='prelu')
-    #net = mx.symbol.Dropout(data=net, p=0.4)
 
-    embedding = mx.symbol.FullyConnected(data=net,num_hidden=1024)
+    embedding=mx.symbol.FullyConnected(data=net,num_hidden=1024)
     embedding = mx.symbol.LeakyReLU(data=embedding, act_type='prelu')
     embedding = mx.symbol.Dropout(data=embedding, p=0.5)
     #embedding = mx.symbol.L2Normalization(data=embedding)
@@ -88,12 +90,8 @@ def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus):
     import  os
     if not os.access('./trained_models',os.F_OK):
         os.mkdir('./trained_models')
-    lr_scheduler = mx.lr_scheduler.FactorScheduler(100, 0.8)
-
-    # steps_per_epoch=(args.num_examples//args.batch_size)
-    # steps=mx.nd.array(args.lr_scheduler)*steps_per_epoch
-    # lr_scheduler=mx.lr_scheduler.MultiFactorScheduler(steps,factor=0.1)
-
+    #lr_scheduler = mx.lr_scheduler.FactorScheduler(80, 0.8)
+    lr_scheduler = mx.lr_scheduler.PolyScheduler(4400,0.01, 2)
     epoch_end_callback = mx.callback.do_checkpoint("./trained_models/your_model", 1)
 
     devs = [mx.gpu(i) for i in range(num_gpus)]
@@ -200,7 +198,7 @@ if args.scratch:
             kvstore='device',
             optimizer='NAG',
             optimizer_params={
-                'learning_rate': 0.01,
+                'learning_rate': 0.04,
                 'momentum': 0.9,
                 'lr_scheduler': lr_scheduler,
                 'wd': 0.005
