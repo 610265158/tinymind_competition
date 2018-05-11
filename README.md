@@ -21,8 +21,7 @@ when it converged, chose a good one with high top-5 acc
 
 #python predict.py --epoch 4 
 
-#
-a result 0.98+ was got
+then,get a result with 0.98+.
 
 
 代码比较糙， :）
@@ -40,14 +39,14 @@ bash ./downmodel.sh
 
 bash ./train.sh
 
-......chose the best model with good validation top-5 acc, epoch 6 for example
+......chose the best model with good validation top-5 acc, epoch 6 for example.
 
 python predict.py --epoch 6
 
 ### show
-run :python show.py
+run: python show.py
 
-then, you can visualize the data after augmentation
+then, you can visualize the data after augmentation.
 
 Now, it is very easy to get a result over 0.99, just play with it ：)
 #
