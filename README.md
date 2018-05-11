@@ -27,9 +27,8 @@ ubuntu16.04 mxnet 1.2.0, cuda9, cudnn7, python3
 
 代码比较糙， :）
 
-
-
-##Update
+#
+## Update
 Some improvement were made. Now, 0.989+ for single model,
 
 Do as below:
