@@ -29,7 +29,8 @@ a result 0.98+ was got
 
 #
 ## Update
-Some improvements were made. Now, 0.989+ for single model,
+
+### Some improvements were made. Now, 0.989+ for single model,
 
 Do as below:
 
@@ -43,10 +44,10 @@ bash ./train.sh
 
 python predict.py --epoch 6
 
+### show
+run :python show.py
 
-And you can run 
-    python show.py 
-to view the data after augmentation
+then, you can visualize the data after augmentation
 
 Now, it is very easy to get a result over 0.99, just play with it ：)
 #
