@@ -52,23 +52,22 @@ eigvec = np.array([[-0.5675, 0.7192, 0.4009],
                    [-0.5808, -0.0045, -0.8140],
                    [-0.5836, -0.6948, 0.4203]])
 test_augs = [
-    mx.image.ForceResizeAug(size=(shape_ + int(0.1 * shape_), shape_ + int(0.1 * shape_))),
+ mx.image.ForceResizeAug(size=(shape_ + int(0.1 * shape_), shape_ + int(0.2 * shape_))),
 
     mx.image.RandomCropAug((shape_, shape_)),
     ##flip not suitable for charactor
     # mx.image.HorizontalFlipAug(0.5),
+
     mx.image.CastAug(),
-    Myaugmentation.BlurAug(0.5, (5, 5)),
-    mx.image.ColorJitterAug(0.1, 0.1, 0.1),
-    mx.image.HueJitterAug(0.5),
-    mx.image.LightingAug(0.5, eigval, eigvec),
-    mx.image.RandomGrayAug(0.5),
+    #Myaugmentation.BlurAug(0.3, (5, 5)),
+
+    #mx.image.ColorJitterAug(0.1, 0.1, 0.1),
+    #mx.image.HueJitterAug(0.5),
+    #mx.image.LightingAug(0.5, eigval, eigvec),
+    #mx.image.RandomGrayAug(0.5),
     # #### extra augmentation
     Myaugmentation.RandomRotateAug(10, 0.5),
 
-    Myaugmentation.BlurAug(0.5, (7, 7)),
-
-    Myaugmentation.Castint8Aug(0.3)
 
 ]
 
