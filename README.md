@@ -43,6 +43,10 @@ bash ./train.sh
 
 python predict.py --epoch 6
 
+#
+## Update
+now,it reached aound 0.9 
+
 ### show
 run: python show.py
 
