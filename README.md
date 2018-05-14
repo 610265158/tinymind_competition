@@ -45,7 +45,7 @@ python predict.py --epoch 6
 
 #
 ## Update
-now,it reached aound 0.9 
+now,it reached aound 0.99 
 
 ### show
 run: python show.py
