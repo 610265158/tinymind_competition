@@ -49,8 +49,8 @@ now,it reached aound 0.99
 
 ### show
 run: python show.py
+then, you can visualize the data after augmentation. And the data is random choose from test set.
 
-then, you can visualize the data after augmentation.
 ![image](https://github.com/610265158/tinymind_competition/blob/master/show.jpg)
 
 Now, it is very easy to get a result over 0.99, just play with it ：)
@@ -60,6 +60,7 @@ it can help view the lrscheduler, choose a ideal one
 
 for example, in train.py #98 lr_scheduler = mx.lr_scheduler.PolyScheduler(8000,0.01, 3)
 run: python view_learnpolicy.py --base_lr 0.01 --max_update 8000 --power 3
+
 ![image](https://github.com/610265158/tinymind_competition/blob/master/lr_scheduler.png)
 #
 
