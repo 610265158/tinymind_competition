@@ -121,7 +121,7 @@ class BlurAug(Augmenter):
             return blur(src,self.kernel)
 
 
-###cat int8, maintain
+###cast to int8,  similar to noise aug
 class Castint8Aug(Augmenter):
     def __init__(self,  possibility):
         super(Castint8Aug, self).__init__(possibility=possibility)
