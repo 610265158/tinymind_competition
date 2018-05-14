@@ -49,7 +49,7 @@ now,it reached aound 0.99
 
 ### show
 run: 
-` ``
+` ``python
 python show.py
 ` ``
 then, you can visualize the data after augmentation. And the data is random choose from test set.
