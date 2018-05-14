@@ -91,7 +91,7 @@ def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus):
     if not os.access('./trained_models',os.F_OK):
         os.mkdir('./trained_models')
     #lr_scheduler = mx.lr_scheduler.FactorScheduler(80, 0.8)
-    lr_scheduler = mx.lr_scheduler.PolyScheduler(4400,0.01, 2)
+    lr_scheduler = mx.lr_scheduler.PolyScheduler(8000,0.01, 2)
     epoch_end_callback = mx.callback.do_checkpoint("./trained_models/your_model", 1)
 
     devs = [mx.gpu(i) for i in range(num_gpus)]
