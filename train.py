@@ -33,7 +33,7 @@ parser.add_argument('--scratch', dest='scratch',type=bool, default=0,  \
 parser.add_argument('--num_epoch', dest='num_epoch',type=int, default=100,  \
                     help='epoch be trained (default: 100)')
 parser.add_argument('--data_shape', dest='data_shape',type=int, default=128,  \
-                    help='the image shape  (default: 112)')
+                    help='the image shape  (default: 128)')
 parser.add_argument('--log_file', dest='log_file',type=str, default='log.log',  \
                     help='the log file (default: log.log)')
 parser.add_argument('--freeze', dest='freeze_layer_pattern', type=str, default="^(stage1|conv0).*",
@@ -41,7 +41,7 @@ parser.add_argument('--freeze', dest='freeze_layer_pattern', type=str, default="
 parser.add_argument('--wd', dest='weight_decay', type=float, default=0.005,
                     help='weight decay (default: 0.005),')
 parser.add_argument('--num_examples', dest='num_examples', type=int, default=32000,
-                    help='num of examples (default: 32000),')
+                    help='num of examples (default: 32000),no use')
 args = parser.parse_args()
 
 
