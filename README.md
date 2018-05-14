@@ -60,7 +60,7 @@ it can help view the lrscheduler, choose a ideal one
 for example, in train.py #98 lr_scheduler = mx.lr_scheduler.PolyScheduler(8800,0.01, 3)
 run: python view_learnpolicy.py --base_lr 0.01 --max_update 8000 --power 3
 
-
+![image](https://github.com/610265158/tinymind_competition/blob/master/lr_scheduler.png)
 #
 
 if there is something wrong, contact me with e-mail: 2120140200@mail.nankai.edu.cn
