@@ -63,7 +63,11 @@ def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_n
         layers_embed.append(net_tmp)
 
     net=mx.symbol.concat(*layers_embed)
-
+    
+    
+    ######infershape,  use it for calculate the shape in the hidden layer, very convinient!!
+    # in_shape, out_shape, uax_shape = net.infer_shape(data=(1, 1, 128, 128))  
+    # print(out_shape)
     net = mx.symbol.BatchNorm(data=net,fix_gamma=False, momentum=0.9, eps=2e-5)
     net = mx.symbol.LeakyReLU(data=net,act_type='prelu')
 
