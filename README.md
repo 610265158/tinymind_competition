@@ -48,7 +48,10 @@ python predict.py --epoch 6
 now,it reached aound 0.99 
 
 ### show
-run: python show.py
+run: 
+` ``
+python show.py
+` ``
 then, you can visualize the data after augmentation. And the data is random choose from test set.
 
 ![image](https://github.com/610265158/tinymind_competition/blob/master/show.jpg)
