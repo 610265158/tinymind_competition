@@ -86,7 +86,7 @@ if args.bagging:
         csv_file.to_csv('bagging_avg_ensemble_result.csv',index=None)
 
     ##############semi
-    pseduolabel=1
+    pseduolabel=0
     if pseduolabel:
         pseduolabel_list = open('pseduolabel.txt', mode="w+", encoding='utf-8');
 
