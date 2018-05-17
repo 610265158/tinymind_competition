@@ -102,8 +102,9 @@ def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus):
     epoch_end_callback = mx.callback.do_checkpoint("./trained_models/your_model", 1)
 
     devs = [mx.gpu(i) for i in range(num_gpus)]
-    acc = mx.metric.TopKAccuracy(top_k=5)
-
+    ##acc = mx.metric.TopKAccuracy(top_k=5)
+    ###top1 is better than top5, for the learderboard score
+    acc=mx.metric.Accuracy()
     freeze_layer_pattern=args.freeze_layer_pattern
 
     ###freeze some layers
