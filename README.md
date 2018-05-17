@@ -11,7 +11,7 @@ ubuntu16.04 mxnet 1.2.0, cuda9, cudnn7, python3
 
 #1.release the data to the current directory
 
-#2.python get_list.py --ratio 0.8      //produce train.lst and val.lst
+#2.python get_list.py --ratio 0.9      //produce train.lst and val.lst
 
 #3.bash ./downmodel.sh                 //download the pretrained model， (mxnet model zoo)
 
@@ -19,9 +19,9 @@ ubuntu16.04 mxnet 1.2.0, cuda9, cudnn7, python3
 
 when it converged, chose a good one with high top-5 acc
 
-#python predict.py --epoch 4 
+#python predict.py --epoch 10
 
-then,get a result with 0.98+.
+then,get a result with 0.99+.
 
 
 代码比较糙， :）
@@ -29,7 +29,7 @@ then,get a result with 0.98+.
 #
 ## Update
 
-### Some improvements were made. Now, 0.989+ for single model,
+### Some improvements were made. Now, 0.991+ for single model,
 
 Do as below:
 
@@ -45,7 +45,7 @@ python predict.py --epoch 6
 
 #
 ## Update
-now,it reached  at least 0.99 
+now,it reached  at least 0.991 
 
 ### show
 run: python show.py
@@ -54,7 +54,7 @@ then, you can visualize the data after augmentation. And the data is random choo
 
 ![image](https://github.com/610265158/tinymind_competition/blob/master/show.jpg)
 
-Now, it is very easy to get a result over 0.99, just play with it ：)
+Now, just play with it ：)
 
 ### add view lrpolicy
 it helps with visualize the lrscheduler, choose a ideal one
