@@ -44,10 +44,14 @@ for s in lines:
 
 
 if args.bagging:
-    file_list=['resnext50_1with_p_result.csv',
+    file_list=['resnext50-1with_p_result.csv',
                'resnext50-2with_p_result.csv',
                'resnext50-3with_p_result.csv',
-                'resnext50-4with_p_result.csv'
+                'resnext50-4with_p_result.csv',
+               'resnext50-5with_p_result.csv',
+               'resnext50-6with_p_result.csv',
+               'densenet121-1with_p_result.csv'
+
                ]
 
 
@@ -64,8 +68,9 @@ if args.bagging:
 
 
     if args.bagging==1:
-        for mat in mat_list:
-            mat_list[0] += mat
+
+        for i in range(1,len(mat_list)):
+            mat_list[0] += mat_list[i]
 
         mat=mat_list[0]/len(mat_list)
 
@@ -86,7 +91,7 @@ if args.bagging:
         csv_file.to_csv('bagging_avg_ensemble_result.csv',index=None)
 
     ##############semi
-    pseduolabel=0
+    pseduolabel=1
     if pseduolabel:
         pseduolabel_list = open('pseduolabel.txt', mode="w+", encoding='utf-8');
 
@@ -98,16 +103,16 @@ if args.bagging:
         label=csv_file['label']
         for i, singlepic in enumerate(name_list):
 
-            result = mat[i, :]
-            result = np.squeeze(result)
+            prob = mat[i, :]
+            prob = np.squeeze(prob)
+            result = np.argsort(prob)[::-1]
 
-            result = np.argsort(result)[::-1]
-
-
-            tmp_str_pseduolabel = str(pseduolabel_count) + '\t' + str(
-                    result[0]) + '\t' + workdir+'/test1/' + singlepic + '\n'
-            pseduolabel_list.write(tmp_str_pseduolabel)
-            pseduolabel_count += 1
+            if prob[result[0]]>0.93:
+                tmp_str_pseduolabel = str(pseduolabel_count) + '\t' + str(
+                            result[0]) + '\t' + workdir+'/test1/' + singlepic + '\n'
+                pseduolabel_list.write(tmp_str_pseduolabel)
+                pseduolabel_count += 1
+        print(pseduolabel_count-36000)
         pseduolabel_list.close()
 
     if args.bagging==2:
