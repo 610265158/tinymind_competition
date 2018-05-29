@@ -137,3 +137,97 @@ class Castint8Aug(Augmenter):
             return mx.nd.array(src,dtype=np.int8)
 
 
+
+class RandNormalizeAug(Augmenter):
+
+    def __init__(self, possibility):
+        super(RandNormalizeAug, self).__init__()
+
+        self.p = possibility
+
+    def __call__(self, src):
+        a = random.random()
+        if a > self.p:
+            return src
+        else:
+            src = src/255.
+            normalized = mx.image.color_normalize(src,
+                                          mean=mx.nd.array([0.485, 0.456, 0.406]),
+                                          std=mx.nd.array([0.229, 0.224, 0.225]))
+        return normalized
+
+
+
+
+##########pixels sub a random value 0+50, like noise
+class RandSub(Augmenter):
+
+    def __init__(self, possibility):
+        super(RandSub, self).__init__()
+
+        self.p = possibility
+
+    def __call__(self, src):
+        a = random.random()
+        if a > self.p:
+            return src
+        else:
+            shape=src.shape
+            mask=25*mx.nd.random.normal(shape=shape)
+
+            subed=src+mask
+        return subed
+
+
+    ###random scale and padding
+class RandScale(Augmenter):
+
+    def __init__(self, possibility,scale):
+        super(RandScale, self).__init__()
+
+        self.p = possibility
+        self.scale=scale
+
+    def __call__(self, src):
+        a = random.random()
+        if a > self.p:
+            return src
+        else:
+            src=src.asnumpy()
+            resized=np.ones(shape=src.shape)
+
+            scale=random.uniform(self.scale,1)
+
+            res=cv2.resize(src,dsize=None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+            edge=resized.shape[0]-res.shape[0]
+            X=random.randint(0,edge)
+            Y= random.randint(0, edge)
+            resized[X:X+res.shape[0],Y:Y+res.shape[0],:]=res
+
+            return mx.nd.array(resized)
+
+
+class RandGray(Augmenter):
+
+    def __init__(self, possibility):
+        super(RandGray, self).__init__()
+
+        self.p = possibility
+
+    def __call__(self, src):
+        a = random.random()
+        if a > self.p:
+            return src
+        else:
+            src=src.asnumpy()
+
+            gray=cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+            src[:,:,0]=gray
+            src[:, :, 1] = gray
+            src[:, :, 2] = gray
+
+        return mx.nd.array(src)
+
+
+
+

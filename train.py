@@ -11,6 +11,8 @@ import random
 import os
 
 os.environ['MXNET_CPU_WORKER_NTHREADS'] = '4'
+os.environ['MXNET_BACKWARD_DO_MIRROR'] = '0'
+os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
 
 import argparse
 parser = argparse.ArgumentParser(description='Start train.')
@@ -30,26 +32,37 @@ parser.add_argument('--finetune', dest='finetune',type=bool, default=0,  \
                     help='finetune frome a pretrained model (default: false)')
 parser.add_argument('--scratch', dest='scratch',type=bool, default=0,  \
                     help='train from sctrach (default: false)')
-parser.add_argument('--num_epoch', dest='num_epoch',type=int, default=100,  \
-                    help='epoch be trained (default: 100)')
+parser.add_argument('--num_epoch', dest='num_epoch',type=int, default=12,  \
+                    help='epoch be trained (default: 12)')
 parser.add_argument('--data_shape', dest='data_shape',type=int, default=128,  \
                     help='the image shape  (default: 128)')
 parser.add_argument('--log_file', dest='log_file',type=str, default='log.log',  \
                     help='the log file (default: log.log)')
-parser.add_argument('--freeze', dest='freeze_layer_pattern', type=str, default="^(stage11|conv01).*",
+parser.add_argument('--freeze', dest='freeze_layer_pattern', type=str, default="^(stage11|conv10).*",
                     help='freeze layer pattern')
 parser.add_argument('--wd', dest='weight_decay', type=float, default=0.005,
                     help='weight decay (default: 0.005),')
-parser.add_argument('--num_examples', dest='num_examples', type=int, default=32000,
-                    help='num of examples (default: 32000),no use')
+parser.add_argument('--num_examples', dest='num_examples', type=int, default=38000,
+                    help='num of examples (default: 32000),not use')
+parser.add_argument('--prefix', dest='prefix', type=str, default='your_model',
+                    help='named of the trained model to be saved')
+parser.add_argument('--cv', dest='cv', type=bool, default=False,
+                    help='cross validation train')
 args = parser.parse_args()
+
+
+import logging
+head = '%(asctime)-15s %(message)s'
+logging.basicConfig(level=logging.DEBUG, format=head)
+logger = logging.getLogger()
+fh = logging.FileHandler(args.log_file)
+logger.addHandler(fh)
 
 
 ############play with the parameters below
 def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_name):
 
     all_layers = symbol.get_internals()
-
     layer_names=args.layer_name.split(',')
 
     #####like the shuffe bet and densenet, just concat different layers, and shuffle them, play with it
@@ -63,20 +76,21 @@ def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_n
         layers_embed.append(net_tmp)
 
     net=mx.symbol.concat(*layers_embed)
-    
-    
+
     ######infershape,  use it for calculate the shape in the hidden layer, very convinient!!
     # in_shape, out_shape, uax_shape = net.infer_shape(data=(1, 1, 128, 128))  
     # print(out_shape)
     net = mx.symbol.BatchNorm(data=net,fix_gamma=False, momentum=0.9, eps=2e-5)
-    net = mx.symbol.LeakyReLU(data=net,act_type='prelu')
+    net = mx.symbol.LeakyReLU(data=net,act_type='elu')
 
-    embedding=mx.symbol.FullyConnected(data=net,num_hidden=1024)
+    embedding=mx.symbol.FullyConnected(data=net,num_hidden=512)
 #     embedding = mx.symbol.LeakyReLU(data=embedding, act_type='prelu')
 #     embedding = mx.symbol.Dropout(data=embedding, p=0.5)
 #####the bn +relu is better than prelu+dropout
     embedding=mx.symbol.BatchNorm(data=embedding, fix_gamma=False, momentum=0.9, eps=2e-5)
     embedding=mx.symbol.Activation(data=embedding,act_type='relu')
+
+    embedding.save('out.json')
     #embedding = mx.symbol.L2Normalization(data=embedding)
     fc2 = mx.symbol.FullyConnected(data=embedding, num_hidden=num_classes,name='lzfc1')  ####classify layer hidden=num_class
     fc2 = mx.symbol.flatten(data=fc2)
@@ -86,23 +100,18 @@ def get_fine_tune_model(symbol, arg_params, num_classes, layer_name=args.layer_n
     return (net, new_args)
 
 
-import logging
-head = '%(asctime)-15s %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=head)
-logger = logging.getLogger()
-fh = logging.FileHandler(args.log_file)
-logger.addHandler(fh)
-
-def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus):
+def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus,model_name_saved=args.network):
     import  os
     if not os.access('./trained_models',os.F_OK):
         os.mkdir('./trained_models')
-    #lr_scheduler = mx.lr_scheduler.FactorScheduler(80, 0.8)
-    lr_scheduler = mx.lr_scheduler.PolyScheduler(8000,0.01, 2)
-    epoch_end_callback = mx.callback.do_checkpoint("./trained_models/your_model", 1)
+
+    ##lr rae decrease to 0 in 10 epochs
+    Total_iter=(args.num_examples//args.batch_size)*10
+    lr_scheduler = mx.lr_scheduler.PolyScheduler(Total_iter,0.01, 2)
+    epoch_end_callback = mx.callback.do_checkpoint("./trained_models/"+model_name_saved, 1)
 
     devs = [mx.gpu(i) for i in range(num_gpus)]
-    #acc = mx.metric.TopKAccuracy(top_k=5)
+
     acc=mx.metric.Accuracy()
     freeze_layer_pattern=args.freeze_layer_pattern
 
@@ -113,7 +122,6 @@ def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus):
         fixed_param_names = [name for name in symbol.list_arguments() if re_prog.match(name)]
     if fixed_param_names:
         logger.info("Freezed parameters: [" + ','.join(fixed_param_names) + ']')
-
 
     mod = mx.mod.Module(symbol=symbol,
                         context=devs,
@@ -139,12 +147,12 @@ def fit(symbol, arg_params, aux_params, train, val, batch_size, num_gpus):
         initializer=mx.init.Xavier(factor_type="in", magnitude=2.34),
         eval_metric=acc)
 
-import  Mydataiter
-train_iter, val_iter=Mydataiter.get_iterator(args.batch_size,args.data_shape)
-
 if args.finetune :
+
     print('finetune from pretrained model ...with', args.network)
 
+    import Mydataiter
+    train_iter, val_iter = Mydataiter.get_iterator(args.batch_size, args.data_shape)
     sym, arg_params, aux_params = mx.model.load_checkpoint('./models/' + args.network, args.epoch)
     (new_sym, new_args) = get_fine_tune_model(sym, arg_params, args.num_classes)
 
@@ -155,9 +163,40 @@ if args.finetune :
 
     fit(new_sym, new_args, aux_params, train_iter, val_iter, args.batch_size,num_gpus=1)
 
+if args.cv:
+
+    import Mydataiter
+    Fold=10
+    import cv
+    ####split the train-val set
+    cv.fold(Fold)
+
+    ###start train with F-fold
+    for i in range(Fold):
+
+        print('finetune from pretrained model ...with cv :', i)
+        train_iter, val_iter = Mydataiter.get_iterator(args.batch_size, args.data_shape, i)
+        sym, arg_params, aux_params = mx.model.load_checkpoint('./models/' + args.network, args.epoch)
+        (new_sym, new_args) = get_fine_tune_model(sym, arg_params, args.num_classes)
+        fit(new_sym, new_args, aux_params, train_iter, val_iter, args.batch_size, num_gpus=1,model_name_saved='cv'+str(i))
+
+    print('train with ', Fold, 'over, start predict the val set')
+
+
+
+    '''
+    os.system("python predict.py --epoch 11 --possibility 1 --cv 0 --network resnext50 --set val")
+    os.system("python predict.py --epoch 11 --possibility 1 --cv 1 --network resnext50 --set val")
+    os.system("python predict.py --epoch 11 --possibility 1 --cv 2 --network resnext50 --set val")
+    os.system("python predict.py --epoch 11 --possibility 1 --cv 3 --network resnext50 --set val")
+    os.system("python predict.py --epoch 11 --possibility 1 --cv 4 --network resnext50 --set val")
+    '''
+
 if args.scratch:
 
     print('train from scratch...with',args.network)
+    import Mydataiter
+    train_iter, val_iter = Mydataiter.get_iterator(args.batch_size, args.data_shape)
     if args.network=='mobilenet':
         from symbols import  mobilenet
         sym=mobilenet.get_symbol(args.num_classes)

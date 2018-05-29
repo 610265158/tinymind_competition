@@ -35,7 +35,7 @@ class custom_iter(mx.io.DataIter):
                 pad=batch.pad, index=batch.index)
 
 
-def get_iterator(batch_size,data_shape):
+def get_iterator(batch_size,data_shape,i=''):
     """return train and val iterators for mnist"""
     # download data
     import numpy as np
@@ -45,24 +45,24 @@ def get_iterator(batch_size,data_shape):
                        [-0.5836, -0.6948, 0.4203]])
     shape_ = data_shape
 
-
     import Myaugmentation
-
     aug_list_test = [
-                    mx.image.ForceResizeAug(size=(shape_+int(0.1*shape_), shape_+int(0.2*shape_))),
+                    mx.image.ForceResizeAug(size=(shape_+int(0.1*shape_), shape_+int(0.1*shape_))),
                     mx.image.CenterCropAug((shape_, shape_)),
                     mx.image.CastAug(),
 
-                    
+                    #Myaugmentation.RandNormalizeAug(1),
     ]
 
     aug_list_train = [
-        mx.image.ForceResizeAug(size=(shape_ + int(0.1 * shape_), shape_ + int(0.2 * shape_))),
+        mx.image.ForceResizeAug(size=(shape_ + int(0.1 * shape_), shape_ + int(0.1 * shape_))),
 
         mx.image.RandomCropAug((shape_, shape_)),
         ##flip not suitable for charactor
         # mx.image.HorizontalFlipAug(0.5),
         mx.image.CastAug(),
+        # Myaugmentation.RandScale(0.5,0.5),
+        Myaugmentation.RandSub(0.5),
         Myaugmentation.BlurAug(0.5, (5, 5)),
 
         mx.image.ColorJitterAug(0.1, 0.1, 0.1),
@@ -74,7 +74,9 @@ def get_iterator(batch_size,data_shape):
 
         Myaugmentation.BlurAug(0.5, (7, 7)),
 
-        Myaugmentation.Castint8Aug(0.3)
+        Myaugmentation.Castint8Aug(0.3),
+
+
     ]
 
     train_iter = mx.image.ImageIter(batch_size=batch_size,
@@ -83,7 +85,7 @@ def get_iterator(batch_size,data_shape):
                                     aug_list=aug_list_train,
                                     shuffle=True,
                                     path_root='',
-                                    path_imglist=os.getcwd()+'/fake.lst',
+                                    path_imglist=os.getcwd()+'/cvlst/train'+str(i)+'.lst',
                                     )
     val_iter = mx.image.ImageIter(batch_size=batch_size,
                                   data_shape=(3, shape_, shape_),
@@ -91,7 +93,7 @@ def get_iterator(batch_size,data_shape):
                                   shuffle=False,
                                   aug_list=aug_list_test,
                                   path_root='',
-                                  path_imglist=os.getcwd()+'/val.lst',
+                                  path_imglist=os.getcwd()+'/cvlst/val'+str(i)+'.lst',
                                  )
 
     return (custom_iter(train_iter), custom_iter(val_iter))
