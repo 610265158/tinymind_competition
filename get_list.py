@@ -9,9 +9,10 @@ def main(ratio):
     name_list=os.listdir(datadir)
 
     ratio=ratio
-
-    train_list=open('train.lst',mode="w+", encoding='utf-8');
-    val_list=open('val.lst',mode="w+", encoding='utf-8');
+    if not os.access('./cvlst',os.F_OK):
+        os.mkdir('./cvlst')
+    train_list=open('./cvlst/train.lst',mode="w+", encoding='utf-8');
+    val_list=open('./cvlst/val.lst',mode="w+", encoding='utf-8');
     label_syntext = open('label_syntext.txt', mode="w+", encoding='utf-8');
     count=0
     count_val=0
